@@ -1,6 +1,7 @@
 package database
 
 import (
+	"effective-garbanzo/logic/common"
 	"errors"
 	"fmt"
 	"time"
@@ -99,14 +100,15 @@ func (module *DatabaseModule_Local) GetPost(UUID string) (result ModelPost, err 
 	return
 }
 
-func (module *DatabaseModule_Local) UpdatePost(Source ModelPost) (err error) {
+func (module *DatabaseModule_Local) UpdatePost(Source ModelPost, Password string) (err error) {
 	err = module.db.Transaction(func(tx *gorm.DB) error {
 		var src ModelPost
 		dbres := tx.Where(&ModelPost{UUID: Source.UUID}).First(&src)
 		if dbres.Error != nil {
 			return dbres.Error
 		}
-		if src.PasswordHash != Source.PasswordHash {
+
+		if !common.ComparePasswordHash(src.PasswordHash, Password) {
 			return errors.New(ERROR_PASSWORDHASH_INCORRECT)
 		}
 
@@ -125,14 +127,15 @@ func (module *DatabaseModule_Local) UpdatePost(Source ModelPost) (err error) {
 	return
 }
 
-func (module *DatabaseModule_Local) DeletePost(UUID string, PasswordHash string) (err error) {
+func (module *DatabaseModule_Local) DeletePost(UUID string, Password string) (err error) {
 	err = module.db.Transaction(func(tx *gorm.DB) error {
 		var src ModelPost
 		dbres := tx.Where(&ModelPost{UUID: UUID}).First(&src)
 		if dbres.Error != nil {
 			return dbres.Error
 		}
-		if src.PasswordHash != PasswordHash {
+
+		if !common.ComparePasswordHash(src.PasswordHash, Password) {
 			return errors.New(ERROR_PASSWORDHASH_INCORRECT)
 		}
 

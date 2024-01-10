@@ -2,14 +2,10 @@ package database
 
 import (
 	"time"
-
-	"gorm.io/gorm"
 )
 
-var ERROR_DUPLICATED error
-
 func init() {
-	ERROR_DUPLICATED = gorm.ErrDuplicatedKey
+	init_errors()
 }
 
 type DatabaseModule interface {

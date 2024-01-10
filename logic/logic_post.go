@@ -1,6 +1,7 @@
 package logic
 
 import (
+	"effective-garbanzo/logic/common"
 	"effective-garbanzo/logic/database"
 	"errors"
 	"time"
@@ -61,13 +62,13 @@ func (l *LogicModule) GetPost(UUID string) (result Post, err error) {
 
 func (l *LogicModule) AddPost(Source Post, Password string) (UUID string, err error) {
 
-	phash, err := PasswordHash(Password)
+	phash, err := common.PasswordHash(Password)
 	if err != nil {
 		UUID = ""
 		return
 	}
 	for {
-		UUID = GenUUID()
+		UUID = common.GenUUID()
 
 		err = l.Database.AddPost(database.ModelPost{
 			UUID:         UUID,
@@ -85,6 +86,7 @@ func (l *LogicModule) AddPost(Source Post, Password string) (UUID string, err er
 }
 
 func (l *LogicModule) UpdatePost(Source Post, Password string) (err error) {
+
 	return
 }
 
