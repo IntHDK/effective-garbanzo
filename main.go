@@ -18,6 +18,7 @@ func main() {
 
 	ws := webserver.NewWebAllServer(webserver.WebAllServerConfiguration{
 		ListenAt: addr,
+		Logger:   log.Default(),
 	})
 	log.Fatal(ws.HttpServerStart())
 }

@@ -1,6 +1,7 @@
 package webserver
 
 import (
+	"log"
 	"net/http"
 
 	"github.com/gorilla/mux"
@@ -15,10 +16,13 @@ type WebAllServer struct {
 	configuration WebAllServerConfiguration
 
 	wssessionmanager *websocketSessionManager
+
+	logger *log.Logger
 }
 
 type WebAllServerConfiguration struct {
 	ListenAt string
+	Logger   *log.Logger
 }
 
 func NewWebAllServer(configuration WebAllServerConfiguration) (server *WebAllServer) {
@@ -28,6 +32,7 @@ func NewWebAllServer(configuration WebAllServerConfiguration) (server *WebAllSer
 		ws_upgrader:      &websocket.Upgrader{},
 		configuration:    configuration,
 		wssessionmanager: NewWebsocketSessionManager(),
+		logger:           configuration.Logger,
 	}
 
 	//Setting router
