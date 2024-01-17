@@ -9,10 +9,20 @@ import (
 var templates sync.Map
 
 func init() {
-	templates.Store("http_view_index", parsetemplate("http_view_index", source_http_view_index))
+	//declare
+	templatenames := []string{
+		"http_view_index",
+	}
+
+	for _, v := range templatenames {
+		tmp, err := parsetemplate(v, source_http_view_index)
+		if err == nil {
+			templates.Store(v, tmp)
+		}
+	}
 }
-func parsetemplate(name string, context string) (res *template.Template) {
-	res, _ = template.New(name).Parse(context)
+func parsetemplate(name string, context string) (res *template.Template, err error) {
+	res, err = template.New(name).Parse(context)
 	//에러처리 추가
 	return
 }

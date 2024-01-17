@@ -9,7 +9,7 @@ type DatabaseModule_Local struct {
 	db *gorm.DB
 }
 
-func (module *DatabaseModule_Local) Connect(DSN string, DBType string, Migrate bool) (result bool, err error) {
+func (module DatabaseModule_Local) Connect(DSN string, DBType string, Migrate bool) (result bool, err error) {
 	switch DBType {
 	case DBTYPE_MYSQL:
 		module.db, err = gorm.Open(mysql.Open(DSN), &gorm.Config{})
@@ -28,7 +28,7 @@ func (module *DatabaseModule_Local) Connect(DSN string, DBType string, Migrate b
 	return
 }
 
-func (module *DatabaseModule_Local) Disconnect() (result bool, err error) {
+func (module DatabaseModule_Local) Disconnect() (result bool, err error) {
 	module.db = nil
 
 	result = true
@@ -36,6 +36,17 @@ func (module *DatabaseModule_Local) Disconnect() (result bool, err error) {
 	return
 }
 
-func (module *DatabaseModule_Local) IsReady() (ready bool) {
+func (module DatabaseModule_Local) IsReady() (ready bool) {
 	return (module.db != nil)
+}
+
+func NewDatabaseModule_Local(DSN string, DBType string, Migrate bool) (res DatabaseModule, err error) {
+	dbmodule := DatabaseModule_Local{}
+	resmodule, err := dbmodule.Connect(DSN, DBType, Migrate)
+	if resmodule {
+		res = dbmodule
+	} else {
+		res = nil
+	}
+	return
 }

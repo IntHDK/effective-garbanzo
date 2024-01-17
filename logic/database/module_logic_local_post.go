@@ -9,7 +9,7 @@ import (
 	"gorm.io/gorm"
 )
 
-func (module *DatabaseModule_Local) SearchPostList(
+func (module DatabaseModule_Local) SearchPostList(
 	Keyword_Title string, Keyword_Author string,
 	CreateAt_Start time.Time, CreateAt_End time.Time,
 	Size int, Offset int, Sort []struct {
@@ -64,15 +64,20 @@ func (module *DatabaseModule_Local) SearchPostList(
 	return
 }
 
-func (module *DatabaseModule_Local) AddPost(Source ModelPost) (err error) {
+func (module DatabaseModule_Local) AddPost(Source ModelPost, Password string) (err error) {
 	err = nil
+
+	pwhash, err := common.PasswordHash(Password)
+	if err != nil {
+		return
+	}
 
 	result := module.db.Create(&ModelPost{
 		UUID:         Source.UUID,
 		Title:        Source.Title,
 		Context:      Source.Context,
 		Author:       Source.Author,
-		PasswordHash: Source.PasswordHash,
+		PasswordHash: pwhash,
 	})
 	if result.Error != nil {
 		err = result.Error
@@ -81,7 +86,7 @@ func (module *DatabaseModule_Local) AddPost(Source ModelPost) (err error) {
 	return
 }
 
-func (module *DatabaseModule_Local) GetPost(UUID string) (result ModelPost, err error) {
+func (module DatabaseModule_Local) GetPost(UUID string) (result ModelPost, err error) {
 	result = ModelPost{}
 	err = nil
 
@@ -100,7 +105,7 @@ func (module *DatabaseModule_Local) GetPost(UUID string) (result ModelPost, err 
 	return
 }
 
-func (module *DatabaseModule_Local) UpdatePost(Source ModelPost, Password string) (err error) {
+func (module DatabaseModule_Local) UpdatePost(Source ModelPost, Password string) (err error) {
 	err = module.db.Transaction(func(tx *gorm.DB) error {
 		var src ModelPost
 		dbres := tx.Where(&ModelPost{UUID: Source.UUID}).First(&src)
@@ -127,7 +132,7 @@ func (module *DatabaseModule_Local) UpdatePost(Source ModelPost, Password string
 	return
 }
 
-func (module *DatabaseModule_Local) DeletePost(UUID string, Password string) (err error) {
+func (module DatabaseModule_Local) DeletePost(UUID string, Password string) (err error) {
 	err = module.db.Transaction(func(tx *gorm.DB) error {
 		var src ModelPost
 		dbres := tx.Where(&ModelPost{UUID: UUID}).First(&src)

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"effective-garbanzo/logic"
 	"effective-garbanzo/webserver"
 	"flag"
 	"log"
@@ -16,9 +17,15 @@ func main() {
 		addr = *addrflag
 	}
 
-	ws := webserver.NewWebAllServer(webserver.WebAllServerConfiguration{
-		ListenAt: addr,
+	logicmodule := logic.NewLogicModule(logic.LogicModuleConfiguration{
+		Database: nil,
 		Logger:   log.Default(),
+	})
+
+	ws := webserver.NewWebAllServer(webserver.WebAllServerConfiguration{
+		ListenAt:    addr,
+		Logger:      log.Default(),
+		LogicModule: logicmodule,
 	})
 	log.Fatal(ws.HttpServerStart())
 }

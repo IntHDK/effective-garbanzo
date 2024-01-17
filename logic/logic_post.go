@@ -12,15 +12,15 @@ func (l *LogicModule) SearchPostList(Keyword_Title string, Keyword_Author string
 	Size int, Offset int, Sort []struct {
 		SortBy      string
 		IsAscending bool
-	}) (totalcount int, result []Post, err error) {
-	if !l.Database.IsReady() {
+	}) (totalcount int64, result []Post, err error) {
+	if !l.database.IsReady() {
 		totalcount = 0
 		result = []Post{}
 		err = errors.New(ERROR_DATASOURCE_NOTREADY)
 		return
 	}
 
-	totalcount, src, err := l.Database.SearchPostList(Keyword_Title, Keyword_Author, CreateAt_Start, CreateAt_End, Size, Offset, Sort)
+	totalcount, src, err := l.database.SearchPostList(Keyword_Title, Keyword_Author, CreateAt_Start, CreateAt_End, Size, Offset, Sort)
 	if err != nil {
 		totalcount = 0
 		result = []Post{}
@@ -43,7 +43,7 @@ func (l *LogicModule) SearchPostList(Keyword_Title string, Keyword_Author string
 
 func (l *LogicModule) GetPost(UUID string) (result Post, err error) {
 
-	src, err := l.Database.GetPost(UUID)
+	src, err := l.database.GetPost(UUID)
 	if src.ID == 0 {
 		result = Post{}
 		err = errors.New(ERROR_DATASOURCE_ENTITYNOTFOUND)
@@ -62,7 +62,6 @@ func (l *LogicModule) GetPost(UUID string) (result Post, err error) {
 
 func (l *LogicModule) AddPost(Source Post, Password string) (UUID string, err error) {
 
-	phash, err := common.PasswordHash(Password)
 	if err != nil {
 		UUID = ""
 		return
@@ -70,13 +69,12 @@ func (l *LogicModule) AddPost(Source Post, Password string) (UUID string, err er
 	for {
 		UUID = common.GenUUID()
 
-		err = l.Database.AddPost(database.ModelPost{
-			UUID:         UUID,
-			Title:        Source.Title,
-			Context:      Source.Context,
-			Author:       Source.Author,
-			PasswordHash: phash,
-		})
+		err = l.database.AddPost(database.ModelPost{
+			UUID:    UUID,
+			Title:   Source.Title,
+			Context: Source.Context,
+			Author:  Source.Author,
+		}, Password)
 		if err != database.ERROR_DUPLICATED {
 			break
 		}

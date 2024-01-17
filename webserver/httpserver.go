@@ -1,6 +1,7 @@
 package webserver
 
 import (
+	"effective-garbanzo/logic"
 	"log"
 	"net/http"
 
@@ -15,14 +16,16 @@ type WebAllServer struct {
 
 	configuration WebAllServerConfiguration
 
+	logicmodule      *logic.LogicModule
 	wssessionmanager *websocketSessionManager
 
 	logger *log.Logger
 }
 
 type WebAllServerConfiguration struct {
-	ListenAt string
-	Logger   *log.Logger
+	ListenAt    string
+	LogicModule *logic.LogicModule
+	Logger      *log.Logger
 }
 
 func NewWebAllServer(configuration WebAllServerConfiguration) (server *WebAllServer) {
@@ -33,6 +36,7 @@ func NewWebAllServer(configuration WebAllServerConfiguration) (server *WebAllSer
 		configuration:    configuration,
 		wssessionmanager: NewWebsocketSessionManager(),
 		logger:           configuration.Logger,
+		logicmodule:      configuration.LogicModule,
 	}
 
 	//Setting router

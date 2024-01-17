@@ -20,9 +20,9 @@ type DatabaseModule interface {
 		Size int, Offset int, Sort []struct {
 			SortBy      string
 			IsAscending bool
-		}) (totalcount int, result []ModelPost, err error)
+		}) (totalcount int64, result []ModelPost, err error)
 	GetPost(UUID string) (result ModelPost, err error)
-	AddPost(Source ModelPost) (err error)
-	UpdatePost(Source ModelPost) (err error)
-	DeletePost(UUID string, PasswordHash string) (err error)
+	AddPost(Source ModelPost, Password string) (err error)
+	UpdatePost(Source ModelPost, Password string) (err error)
+	DeletePost(UUID string, Password string) (err error)
 }
