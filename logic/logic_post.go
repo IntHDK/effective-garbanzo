@@ -7,6 +7,10 @@ import (
 	"time"
 )
 
+const (
+	PARAM_SearchPostList_SortBy_CreateAt = "CreateAt"
+)
+
 func (l *LogicModule) SearchPostList(Keyword_Title string, Keyword_Author string,
 	CreateAt_Start time.Time, CreateAt_End time.Time,
 	Size int, Offset int, Sort []struct {
@@ -33,7 +37,7 @@ func (l *LogicModule) SearchPostList(Keyword_Title string, Keyword_Author string
 			ID:       v.UUID,
 			Author:   v.Author,
 			Title:    v.Title,
-			Context:  v.Context,
+			Context:  "",
 			UpdateAt: v.UpdatedAt,
 		})
 	}

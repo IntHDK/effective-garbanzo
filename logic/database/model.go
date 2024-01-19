@@ -16,3 +16,11 @@ type ModelPost struct {
 	Author       string
 	PasswordHash string
 }
+
+type ModelPostListRecord struct {
+	gorm.Model
+	UUID         string `gorm:"uniqueIndex"`
+	Title        string
+	Author       string
+	PasswordHash string
+}

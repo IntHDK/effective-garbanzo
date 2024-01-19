@@ -10,8 +10,8 @@ func init() {
 
 type DatabaseModule interface {
 	//Connection
-	Connect(DSN string, DBType string, Migrate bool) (result bool, err error)
-	Disconnect() (result bool, err error)
+	connect(DSN string, DBType string, Migrate bool) (result bool, err error)
+	disconnect() (result bool, err error)
 	IsReady() (ready bool)
 
 	//Query
@@ -20,7 +20,7 @@ type DatabaseModule interface {
 		Size int, Offset int, Sort []struct {
 			SortBy      string
 			IsAscending bool
-		}) (totalcount int64, result []ModelPost, err error)
+		}) (totalcount int64, result []ModelPostListRecord, err error)
 	GetPost(UUID string) (result ModelPost, err error)
 	AddPost(Source ModelPost, Password string) (err error)
 	UpdatePost(Source ModelPost, Password string) (err error)

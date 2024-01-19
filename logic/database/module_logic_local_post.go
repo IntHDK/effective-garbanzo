@@ -15,9 +15,9 @@ func (module DatabaseModule_Local) SearchPostList(
 	Size int, Offset int, Sort []struct {
 		SortBy      string
 		IsAscending bool
-	}) (totalcount int64, result []ModelPost, err error) {
+	}) (totalcount int64, result []ModelPostListRecord, err error) {
 	totalcount = 0
-	result = []ModelPost{}
+	result = []ModelPostListRecord{}
 	err = nil
 
 	var qtx *gorm.DB = module.db
@@ -50,10 +50,10 @@ func (module DatabaseModule_Local) SearchPostList(
 		qtx = qtx.Limit(Size).Offset(Offset)
 	}
 
-	qresult := qtx.Find(&result)
+	qresult := qtx.Model(&ModelPost{}).Find(&result)
 	if qresult.Error != nil {
 		err = qresult.Error
-		result = []ModelPost{}
+		result = []ModelPostListRecord{}
 		totalcount = 0
 		//TODO: 에러 처리
 		return

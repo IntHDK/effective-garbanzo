@@ -48,5 +48,8 @@ func NewWebAllServer(configuration WebAllServerConfiguration) (server *WebAllSer
 func (s *WebAllServer) HttpServerStart() error {
 	s.httpserver.Addr = s.configuration.ListenAt
 	s.httpserver.Handler = s.router
+
+	s.logger.Printf("HttpServer : listen at %s...\n", s.configuration.ListenAt)
+
 	return s.httpserver.ListenAndServe()
 }
